@@ -1,0 +1,39 @@
+Minimo: (5)
+
+Fondo
+
+-- 3 imagenes/frames
+
+-- 4 Movimientos por imagen principal (con desplazamiento)
+
+-- Interactuar con teclas
+
+-- Canvas minimo 300x300
+
+1 colision con animación
+
+-- control de margenes de pantalla
+
+Maxim Relatiu: (10)
+
+Pantalla de inicio
+
+-- Fondo con movimiento
+
+5 imagenes por frame
+
+6 movimientos por imagen principal
+
+interactuar con teclas (combinaciones de teclas) y raton
+
+Canvas de 1000x600 maximo
+
+3 colisiones con animacion
+
+puntuacion/vida
+
+control de margenes de pantalla
+
+opcion extra +1 Sonido acorde el juego (acumulable)
+
+30,30 x 124.184
