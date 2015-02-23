@@ -14,6 +14,7 @@ var imgEnemy = new Image();
 var background = new Image();
 var resources = [];
 var enemies = [];
+var enemyOn=false;
 
 var contexto;
 
@@ -33,7 +34,8 @@ var player = {
     move:16,
     firing:false,
     hit: function(){
-        
+        player.lives--;
+//        if(player.lives==0) gameOver();
     },
     img:imgPlayer,
     paint: function(){
@@ -174,8 +176,14 @@ function init(){
         velocidad=0;
 //        clearInterval(idInterval);
     }
-    if(posicion===2000){
-        showEnemy();
+    
+    if(posicion<200){
+        showSmallEnemy();
+        
+    }
+    
+    if(posicion<500){
+        if(!enemyOn)showEnemy();
     }
     
     panelVelocidad.innerHTML="Velocidad: "+Math.round(velocidad);
@@ -219,11 +227,15 @@ function fire(){
     resources.push(bullet);
 }
 
+function showSmallEnemy(){
+    
+}
+
 function showEnemy() {
     alert("Enemy!!! "+posicion);
     var enemy = {
         x: ancho/2,
-        y: 10,
+        y: -144,
         width:90,
         height:144,
         status:32,
@@ -236,8 +248,15 @@ function showEnemy() {
         hited:275,
         lives:25,
         idInterval:0,
+        initInterval:0,
         nearDeathinterval:0,
         init: function(){
+            enemyOn=true;
+            initInterval=setInterval(function (){
+                enemy.y+=0.1;
+                if(enemy.y==10)clearInterval(enemy.initInterval);
+            },10);
+
             enemy.idInterval=setInterval(function(){
                 enemy.action+=96;
                 if(enemy.action==704) enemy.action=32;
