@@ -5,6 +5,11 @@ var loadedCount = 0;
 var panelVelocidad;
 var panelPosicion;
 
+var soundTrack;
+var soundEfx; 
+var soundDeathPlayer; 
+var soundDeathBoss; 
+
 var idInterval;
 var posicion=2590-alto;
 var velocidad = 0.5;
@@ -36,7 +41,18 @@ var player = {
     firing:false,
     hit: function(){
         player.lives--;
-//        if(player.lives==0) gameOver();
+        if(player.lives<1) {
+            //gameOver();
+            player.direction=315;
+            var intervalDeath =setInterval(function(){
+                player.direction+=20;
+            },200);
+            soundDeathPlayer.play();
+            setTimeout(function (){
+                clearInterval(intervalDeath);
+            },1800);
+        }
+        
     },
     img:imgPlayer,
     paint: function(){
@@ -47,9 +63,18 @@ var player = {
 var keys = [];
 
 window.onload = function(){
+    
+    
     panelVelocidad = document.getElementById("velocidad");
     panelPosicion = document.getElementById("posicion");
     panelMarcador = document.getElementById("marcador");
+    soundDeathPlayer = document.getElementById("soundDeathPlayer");
+    soundDeathBoss = document.getElementById("soundDeathBoss");
+    
+    soundTrack = document.getElementById("soundTrack");
+    soundTrack.loop = true;
+    soundEfx = document.getElementById("soundEfx");
+    
     var canvas=document.getElementById("game");
     canvas.width=ancho;
     canvas.height=alto;
@@ -95,7 +120,7 @@ window.onload = function(){
 function init(){
     //player.direction=player.recto;
     player.action=player.move;
-    if (!keys[38] && !keys[40] && !keys[39] && !keys[37]) {
+    if (!keys[38] && !keys[40] && !keys[39] && !keys[37] && player.lives>0) {
         switch(player.direction){
             case player.izq2:
                 setTimeout(function(){player.direction=player.izq1;},100);
@@ -117,7 +142,7 @@ function init(){
 
     };
 
-   if (keys[38]) {
+   if (keys[38] && player.lives>0) {
        // up arrow
        if (player.y > 0) {                         
            player.y--;
@@ -125,7 +150,7 @@ function init(){
        player.action=player.move;
 //       increase();
    }
-   if (keys[40]) {
+   if (keys[40] && player.lives>0) {
        // down arrow
        if (player.y+player.height < alto) {                         
            player.y++;
@@ -133,7 +158,7 @@ function init(){
        }
 //       decrease();
    }
-   if (keys[39]) {
+   if (keys[39] && player.lives>0) {
        // right arrow
        if (player.x < ancho) {                         
            player.x++;
@@ -157,7 +182,7 @@ function init(){
             }
        }          
    }          
-   if (keys[37]) {                 
+   if (keys[37] && player.lives>0) {                 
         // left arrow                  
        if (player.x > 0) {
            player.x--;
@@ -178,7 +203,7 @@ function init(){
        }
    }
    
-    if (keys[32]) {
+    if (keys[32] && player.lives>0) {
        // space
         if (!player.firing)fire();
    }
@@ -251,6 +276,7 @@ function fire(){
        player.firing=false; 
     },300);
     resources.push(bullet);
+    soundEfx.play();
 }
 
 function showSmallEnemy(){
@@ -351,6 +377,7 @@ function showEnemy() {
                         var deathInterval=setInterval(function(){
                             enemy.action+=96;
                         },500);
+                        soundDeathBoss.play();
                         setTimeout(function(){
                             clearInterval(deathInterval);
                             enemies.splice(enemies.indexOf(enemy), 1);
@@ -368,8 +395,8 @@ function showEnemy() {
 
 function loadingResources() {
     loadedCount++;
-
     if(loadedCount==3){
+        soundTrack.play();
         idInterval= setInterval(function(){
             posicion-=velocidad;
             init();
