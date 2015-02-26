@@ -25,6 +25,7 @@ var player = {
     height:32,
     lives:5,
     type:"player",
+    direction:64,
     recto:64,
     izq1:32,
     izq2:0,
@@ -92,8 +93,29 @@ window.onload = function(){
 
 
 function init(){
-    player.direction=player.recto;
+    //player.direction=player.recto;
     player.action=player.move;
+    if (!keys[38] && !keys[40] && !keys[39] && !keys[37]) {
+        switch(player.direction){
+            case player.izq2:
+                setTimeout(function(){player.direction=player.izq1;},100);
+                break;
+           case player.dch2:
+                setTimeout(function(){player.direction=player.dch1;},100);
+                break;
+            case player.izq1:
+                setTimeout(function(){player.direction=player.recto;},100);
+                break;
+            case player.dch1:
+                setTimeout(function(){player.direction=player.recto;},100);
+                break;
+            
+
+
+        } 
+        //player.direction=player.recto;
+
+    };
 
    if (keys[38]) {
        // up arrow
@@ -117,16 +139,20 @@ function init(){
            player.x++;
             switch (player.direction){
                 case player.izq1:
-                    player.direction=player.recto;
+                    setTimeout(function(){player.direction=player.recto;},500);
+                    console.log("izq1"+player.direction);
                     break;
                 case player.izq2:
                     player.direction=player.izq1;
+                    console.log("izq2"+player.direction);
                     break;
                 case player.recto:
                     player.direction=player.dch1;
+                    console.log("Recto"+player.direction);
                     break;
                 case player.dch1:
-                    player.direction=player.dch2;
+                    setTimeout(function(){player.direction=player.dch2;},500);
+                    console.log("dch1"+player.direction);
                     break;
             }
        }          
@@ -137,7 +163,7 @@ function init(){
            player.x--;
             switch (player.direction){
                 case player.izq1:
-                    player.direction=player.izq2;
+                    setTimeout(function(){player.direction=player.izq2;},500);
                     break;
                 case player.recto:
                     player.direction=player.izq1;
