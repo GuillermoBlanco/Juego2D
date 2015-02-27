@@ -1,0 +1,24 @@
+http://www.javascripter.net/faq/leftvsrightmousebutton.htm
+
+var sTestEventType='mousedown';
+
+function handleMouseEvent(e) {
+ var evt = (e==null ? event:e);
+ var clickType = 'LEFT';
+ if (evt.type!=sTestEventType) return true;
+ if (evt.which) { 
+  if (evt.which==3) clickType='RIGHT';
+  if (evt.which==2) clickType='MIDDLE';
+ }
+ else if (evt.button) {
+  if (evt.button==2) clickType='RIGHT';
+  if (evt.button==4) clickType='MIDDLE';
+ }
+ alert(evt.type+': '+clickType+' button!');
+ return true;
+}
+
+document.onmousedown = handleMouseEvent;
+document.onmouseup   = handleMouseEvent;
+document.onclick     = handleMouseEvent;
+
