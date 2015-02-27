@@ -18,6 +18,7 @@ var imgPlayer = new Image();
 var imgEnemy = new Image();
 var background = new Image();
 var resources = [];
+var enemyBullets = [];
 var enemies = [];
 var enemyOn=false;
 
@@ -30,6 +31,7 @@ var player = {
     height:32,
     lives:5,
     type:"player",
+    fighter:1,
     direction:64,
     recto:64,
     izq1:32,
@@ -42,34 +44,60 @@ var player = {
     hit: function(){
         player.lives--;
         if(player.lives<1) {
-            //gameOver();
-            player.direction=315;
+            
+            player.direction=160;
             var intervalDeath =setInterval(function(){
-                player.direction+=20;
-            },200);
+                player.direction+=32;
+            },300);
             soundDeathPlayer.play();
             setTimeout(function (){
                 clearInterval(intervalDeath);
-            },1800);
+                gameOver();
+            },2400);
         }
         
     },
     img:imgPlayer,
     paint: function(){
         contexto.drawImage(player.img,player.direction,player.action,32,32,player.x-16,player.y,player.width,player.height);
-    }
+    },
+    collision: function(){
+            contexto.beginPath();
+            contexto.rect(player.x, player.y, player.width, player.height);
+
+            for (var i = 0; i < enemyBullets.length; i++){
+
+                if (contexto.isPointInPath(enemyBullets[i].x,    enemyBullets[i].y)     ||
+                    contexto.isPointInPath(enemyBullets[i].x+enemyBullets[i].width,   enemyBullets[i].y)     ||
+
+//                    context.isPointInPath(centerX, centerY) ||
+
+                    contexto.isPointInPath(enemyBullets[i].x,    enemyBullets[i].y+enemyBullets[i].height)  ||
+                    contexto.isPointInPath(enemyBullets[i].x+enemyBullets[i].width,   enemyBullets[i].y+enemyBullets[i].height) ){
+                    
+                    enemyBullets[i].hit();
+                    player.hit();
+                }
+                
+            };
+        }
 };
+var avion;
 
 var keys = [];
+var mouse = [];
 
 window.onload = function(){
     
+    avion = decodeURIComponent(location.search.substr(1,location.search.length).split("=")[1]).replace(/'/g,"");
     
     panelVelocidad = document.getElementById("velocidad");
     panelPosicion = document.getElementById("posicion");
-    panelMarcador = document.getElementById("marcador");
+    panelVidas = document.getElementById("vidas");
     soundDeathPlayer = document.getElementById("soundDeathPlayer");
     soundDeathBoss = document.getElementById("soundDeathBoss");
+    incButton = document.getElementById("incButton");
+    decButton = document.getElementById("decButton");
     
     soundTrack = document.getElementById("soundTrack");
     soundTrack.loop = true;
@@ -90,6 +118,32 @@ window.onload = function(){
         keys[e.keyCode] = false;
     });
     
+    document.body.addEventListener("mousedown", function (e) {
+        e = e || window.event; //window.event for IE
+        mouse[e.keyCode || e.which] = true;
+//        switch (e.keyCode || e.which){
+//            case 1: //IZQ
+//                break;
+//            case 3: //DCH
+//                break;
+//                
+//        }
+//        alert("Keycode of key pressed: " + (e.keyCode || e.which));
+    });
+    
+    document.body.addEventListener("mouseup", function (e) {
+        e = e || window.event; //window.event for IE
+        mouse[e.keyCode || e.which] = false;
+//        switch (e.keyCode || e.which){
+//            case 1: //IZQ
+//                break;
+//            case 3: //DCH
+//                break;
+//                
+//        }
+//        alert("Keycode of key pressed: " + (e.keyCode || e.which));
+    });
+    
     //LOADING BACKGROUND
     background.src = "asset/australia.png";
     background.paint = function(){
@@ -98,15 +152,16 @@ window.onload = function(){
     //    background.src = "asset/".scene;
     background.onload = function (){
         loadingResources();};
-    };
-
+    
     //LOADING PLAYER SPRITE
-    player.img.src = "asset/fighters.png";
-    //    imgPlayer.src = "asset/f-18.png";
-    //    imgPlayer.src = "asset/".sprite;
-        player.img.onload =function (){
-            resources.push(player);
-            loadingResources();
+//    player.img.src = "asset/fighters.png";
+//    player.img.src = "asset/f-14.png";
+
+    player.img.src = "asset/"+avion+".png";
+    
+    player.img.onload =function (){
+        resources.push(player);
+        loadingResources();
     };
     
     //LOADING ENEMY
@@ -114,10 +169,26 @@ window.onload = function(){
         imgEnemy.onload =function (){
             loadingResources();
     };
+};
+
     
 
 
 function init(){
+    if(mouse[1]){
+        increase();
+        incButton.style.background="rgba(255,0,0,0.6)";
+    }
+    else    incButton.style.background="rgba(255,0,0,0.8)";
+
+
+    if (mouse[3]) {
+        decrease();
+        decButton.style.background="rgba(255,0,0,0.6)";
+    }
+    else    decButton.style.background="rgba(255,0,0,0.8)";
+
+        
     //player.direction=player.recto;
     player.action=player.move;
     if (!keys[38] && !keys[40] && !keys[39] && !keys[37] && player.lives>0) {
@@ -165,19 +236,19 @@ function init(){
             switch (player.direction){
                 case player.izq1:
                     setTimeout(function(){player.direction=player.recto;},500);
-                    console.log("izq1"+player.direction);
+//                    console.log("izq1"+player.direction);
                     break;
                 case player.izq2:
                     player.direction=player.izq1;
-                    console.log("izq2"+player.direction);
+//                    console.log("izq2"+player.direction);
                     break;
                 case player.recto:
                     player.direction=player.dch1;
-                    console.log("Recto"+player.direction);
+//                    console.log("Recto"+player.direction);
                     break;
                 case player.dch1:
                     setTimeout(function(){player.direction=player.dch2;},500);
-                    console.log("dch1"+player.direction);
+//                    console.log("dch1"+player.direction);
                     break;
             }
        }          
@@ -215,13 +286,19 @@ function init(){
     for (var i = 0; i < resources.length; i++) {
         if (contexto)resources[i].paint();
     }
+    
+    for (var i = 0; i < enemyBullets.length; i++) {
+        if (contexto)enemyBullets[i].paint();
+    }
+    
     for (var i = 0; i < enemies.length; i++) {
         if (contexto)enemies[i].paint();
         if (enemies[i].alive) {
             enemies[i].collision();
         }
     }
-    
+   
+    player.collision();
     
     if (posicion>2590-alto || posicion<1 ){
         velocidad=0;
@@ -239,10 +316,10 @@ function init(){
     
     panelVelocidad.innerHTML="Velocidad: "+Math.round(velocidad);
     panelPosicion.innerHTML="Posicion: "+Math.round(posicion);
-    panelMarcador.innerHTML="Vidas: "+player.lives;
+    panelVidas.innerHTML="Vidas: "+player.lives;
     if (enemies.length) {
         for (var i = 0; i <enemies.length; i++ )
-            panelMarcador.innerHTML+="</br>Enemy: "+enemies[i].lives;
+            panelVidas.innerHTML+="</br>Enemy: "+enemies[i].lives;
     }
 }
 
@@ -284,7 +361,7 @@ function showSmallEnemy(){
 }
 
 function showEnemy() {
-    alert("Enemy!!! "+posicion);
+//    alert("Enemy!!! "+posicion);
     var enemy = {
         x: ancho/2,
         y: -144,
@@ -298,21 +375,64 @@ function showEnemy() {
         alive:true,
         img:imgEnemy,
         hited:275,
-        lives:25,
+        lives:100,
         idInterval:0,
         initInterval:0,
         nearDeathinterval:0,
         init: function(){
             enemyOn=true;
-            initInterval=setInterval(function (){
+            enemy.initInterval=setInterval(function (){
                 enemy.y+=0.1;
-                if(enemy.y==10)clearInterval(enemy.initInterval);
+                if(enemy.y>10){
+                    clearInterval(enemy.initInterval);
+                    enemy.fire();
+                }
             },10);
 
             enemy.idInterval=setInterval(function(){
                 enemy.action+=96;
                 if(enemy.action==704) enemy.action=32;
             },500);  
+        },
+        fire: function(){
+            setInterval(function(){
+                var bullet = {
+                    x: enemy.x+enemy.width/2,
+                    y: enemy.y+enemy.height,
+                    width:3,
+                    height:2,
+                    velocity:2,
+                    direction:"izq",
+                    type:"enemyBullet",
+                    paint: function(){
+                        contexto.fillStyle = "yellow";
+                        contexto.beginPath();
+                        contexto.arc(bullet.x, bullet.y, 10, 0, Math.PI*2, true);
+                        contexto.closePath();
+                        contexto.fill();
+                        if (bullet.direction=="izq" && bullet.x>0) {
+                            bullet.x--;
+                        }
+                        if(bullet.direction=="izq" && bullet.x==0) {
+                            bullet.direction="dch";
+                            bullet.x++;
+                        } 
+                        if (bullet.direction=="dch" && bullet.x<(ancho-bullet.width) ) {
+                            bullet.x++;
+                        }
+                        if(bullet.direction=="dch" && bullet.x==(ancho-bullet.width) ) {
+                            bullet.direction="izq";
+                            bullet.x--;
+                        }
+                        bullet.y+=bullet.velocity;
+                    },
+                    hit: function(){
+                        enemyBullets.splice(enemyBullets.indexOf(bullet),1);
+                    }
+                };
+
+                enemyBullets.push(bullet);
+            },800);
         },
         paint: function(){
 //            contexto.fillStyle = "red";
@@ -415,3 +535,7 @@ function cargaContextoCanvas(idCanvas){
         return FALSE;
 }
 
+function gameOver(){
+    alert("Juego acabado");
+    window.location="index.html";
+}

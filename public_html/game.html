@@ -7,16 +7,18 @@
    </head>
  
    <body style="background:black; color: white">
-      <canvas id="game" width="500" height="400">Navegador no soportado</canvas>
-      <audio id="soundTrack" src="asset/sounds/Soundtrack.mp3" style="display: none;"></audio>
-      <audio id="soundEfx" src="asset/sounds/shot.mp3" style="display: none;"></audio>
-      <audio id="soundDeathPlayer" src="asset/sounds/Bomb_short.mp3" style="display: none;"></audio>
-      <audio id="soundDeathBoss" src="asset/sounds/Bomb_large.mp3" style="display: none;"></audio>
-      <div style="float:right" id="marcador"></div>
-      <div style="float:right"><button onclick="increase();">Subir velocidad</button></div>
-      <div style="float:right"><button onclick="decrease();">Bajar velocidad</button></div>
-      <div style="float:left" id="velocidad"></div></br>
-      <div style="float:left" id="posicion"></div>
+        <canvas id="game" width="500" height="400">Navegador no soportado</canvas>
+        <audio id="soundTrack" src="asset/sounds/Soundtrack.mp3" style="display: none;"></audio>
+        <audio id="soundEfx" src="asset/sounds/shot.mp3" style="display: none;"></audio>
+        <audio id="soundDeathPlayer" src="asset/sounds/Bomb_short.mp3" style="display: none;"></audio>
+        <audio id="soundDeathBoss" src="asset/sounds/Bomb_large.mp3" style="display: none;"></audio>
+        <div id="marcador" style="float:right">
+            <div id="vidas"></div>
+            <div  id="velocidad"></div>
+            <div  id="posicion" hidden="true"></div>
+        </div>
+        <div><button id="incButton" onclick="increase();">Subir velocidad (mouse leftclick)</button></div>
+        <div><button id="decButton" onclick="decrease();">Bajar velocidad (mouse rightclick)</button></div>
       
    </body>
  
